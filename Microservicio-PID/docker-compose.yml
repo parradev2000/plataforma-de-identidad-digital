@@ -1,0 +1,11 @@
+services:
+  api:
+    build: .
+    container_name: Microservicio-PID
+    ports:
+      - "8001:8000"
+    env_file:
+      - .env
+    environment:
+      DATABASE_URL: ${DATABASE_URL:-postgresql+psycopg2://postgres:postgres@10.10.16.250:5432/bd_solicitudes}
+    restart: unless-stopped
