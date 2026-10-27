@@ -49,13 +49,11 @@ Servicio disponible en `http://127.0.0.1:8000`.
 | ------------------------ | ------------------------- | -------------------------------------------------------------- |
 | `Persona`                | `personas`                | `ci` de 11 dígitos único, `activo` booleano    |
 | `Telefono`               | `telefonos`               | Nomenclador; N:N con personas (`persona_telefonos`) |
-| `Usuario`                | `usuarios`                | rol: SOLICITANTE / SOPORTE / COORDINADOR / ADMIN / AUDITOR     |
-| `Verificacion`           | `verificaciones`          | estado, token de credencial, `vigencia_hasta` (RN-10)          |
-| `Servicio`               | `servicios`               | catálogo con `datos_requeridos`, SLA y sistema destino         |
-| `SolicitudServicio`      | `solicitudes_servicio`    | número único (`SOL-AAAA-XXXXXX`), estado, prioridad, soporte   |
-| `SolicitudItem`          | `solicitud_items`         | un ítem por servicio, datos específicos y motivo de fallo      |
-| `CuentaAprovisionada`    | `cuentas_aprovisionadas`  | identificador, datos generados, hash de credencial (RN-08)     |
-| `Auditoria`              | `auditoria`               | solo inserción; índices por entidad y fecha                    |
+
+> Las tablas `usuarios`, `verificaciones`, `servicios`,
+> `solicitudes_servicio`, `solicitud_items`, `cuentas_aprovisionadas` y
+> `auditoria` fueron eliminadas por la migración `0006_solo_personas_telefonos`;
+> la base solo conserva `personas`, `telefonos` y `persona_telefonos`.
 
 ### Estados (sección 7 de la especificación)
 
@@ -80,6 +78,7 @@ Servicio disponible en `http://127.0.0.1:8000`.
 | `POST` | `/api/v1/personas/{id}/phones/{tel_id}` | Asigna un teléfono existente                   |
 | `DELETE`| `/api/v1/personas/{id}/phones/{tel_id}` | Quita el teléfono a la persona                 |
 | `GET`  | `/api/v1/personas/{id}`                 | Obtiene una persona                            |
+| `DELETE`| `/api/v1/personas/{id}`                | Elimina una persona                            |
 | `POST` | `/api/v1/verifications`                 | Inicia verificación (stub APROBADA, ver nota)  |
 | `GET`  | `/api/v1/verifications`                 | Lista con `persona_id`, `skip`, `limit`        |
 | `GET`  | `/api/v1/verifications/{id}`            | Consulta estado (RF-VER-09)                    |

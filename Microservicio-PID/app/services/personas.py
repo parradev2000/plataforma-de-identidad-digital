@@ -81,3 +81,9 @@ def create_persona(db: Session, data: PersonaCreate) -> Persona:
     _commit(db)
     db.refresh(persona)
     return _get_persona_o_404(db, persona.id)
+
+
+def delete_persona(db: Session, persona_id: int) -> None:
+    persona = _get_persona_o_404(db, persona_id)
+    db.delete(persona)
+    _commit(db)

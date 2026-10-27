@@ -177,3 +177,35 @@ def test_ci_duplicado(api_client: TestClient) -> None:
         json={"ci": ci, "nombre": "Segunda"},
     )
     assert duplicada.status_code == 409
+
+
+def test_eliminar_persona(api_client: TestClient) -> None:
+    ci = _ci()
+    creada = api_client.post(
+        "/api/v1/personas",
+        json={"ci": ci, "nombre": "Persona A Eliminar"},
+    )
+    assert creada.status_code == 201, creada.text
+    persona_id = creada.json()["id"]
+
+    borrada = api_client.delete(f"/api/v1/personas/{persona_id}")
+    assert borrada.status_code == 204, borrada.text
+
+    # Ya no existe ni es localizable
+    assert api_client.get(f"/api/v1/personas/{persona_id}").status_code == 404
+    assert api_client.get("/api/v1/personas", params={"ci": ci}).json() == []
+
+    # Eliminar dos veces -> 404
+    repetida = api_client.delete(f"/api/v1/personas/{persona_id}")
+    assert repetida.status_code == 404
+
+    # El CI queda libre para otra persona
+    reutilizado = api_client.post(
+        "/api/v1/personas",
+        json={"ci": ci, "nombre": "Otra Persona Mismo CI"},
+    )
+    assert reutilizado.status_code == 201, reutilizado.text
+
+
+def test_eliminar_persona_inexistente(api_client: TestClient) -> None:
+    assert api_client.delete("/api/v1/personas/999999").status_code == 404

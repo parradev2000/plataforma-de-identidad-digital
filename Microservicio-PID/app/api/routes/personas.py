@@ -1,6 +1,6 @@
 from typing import Annotated
 
-from fastapi import APIRouter, Depends, Path, Query, status
+from fastapi import APIRouter, Depends, Path, Query, Response, status
 from sqlalchemy.orm import Session
 
 from app.db.session import get_db
@@ -66,3 +66,16 @@ def create_persona(
     db: Session = Depends(get_db),
 ) -> Persona:
     return persona_service.create_persona(db, payload)
+
+
+@router.delete(
+    "/{persona_id}",
+    status_code=status.HTTP_204_NO_CONTENT,
+    summary="Elimina una persona",
+)
+def delete_persona(
+    persona_id: Annotated[int, Path(gt=0)],
+    db: Session = Depends(get_db),
+) -> Response:
+    persona_service.delete_persona(db, persona_id)
+    return Response(status_code=status.HTTP_204_NO_CONTENT)
