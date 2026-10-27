@@ -18,6 +18,7 @@ class UserUpdateRequest_v1 extends FormRequest
             'nombres' => 'string',
             'rol_id' => 'integer',
             'usuario' => 'string|lowercase|unique:pgsql.autenticacion.users,usuario,'.$this->user,
+            'persona_id' => 'integer|exists:pgsql.nomencladores.personas,id|unique:pgsql.autenticacion.users,persona_id,'.$this->user,
         ];
     }
 
@@ -28,6 +29,7 @@ class UserUpdateRequest_v1 extends FormRequest
             'usuario' => '[nombre del usuario]',
             'rol_id' => '[rol del usuario]',
             'estado' => '[estado del usuario]',
+            'persona_id' => '[persona]',
             'carne' => '[carne del usuario]'
         ];
     }

@@ -9,6 +9,7 @@ use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Spatie\Permission\Traits\HasRoles;
+use App\Models\Persona;
 
 class User extends Authenticatable
 {
@@ -18,7 +19,7 @@ class User extends Authenticatable
 
     protected $fillable = [
         'usuario',
-        'nombres',
+        'persona_id',
         'rol_id',
         'estado',
         'int',
@@ -38,6 +39,11 @@ class User extends Authenticatable
         return $this->belongsTo(rol::class);
     }
 
+    public function persona()
+    {
+        return $this->belongsTo(Persona::class, 'persona_id');
+    }
+
     protected function usuario(): Attribute
     {
         return new Attribute(
@@ -47,14 +53,6 @@ class User extends Authenticatable
             set: function($value){
                 return strtolower($value);
             }
-        );
-    }
-
-    protected function nombres(): Attribute
-    {
-        return new Attribute(
-            get: fn($value) => ucwords($value),
-            set: fn($value) => strtolower($value)
         );
     }
 

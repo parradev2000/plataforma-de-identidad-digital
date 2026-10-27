@@ -15,6 +15,7 @@ class UserRegistrerRequest_v1 extends FormRequest
     {
         return [
             'nombres' => 'required|string',
+            'persona_id' => 'required|integer|exists:pgsql.nomencladores.personas,id|unique:pgsql.autenticacion.users,persona_id',
             'rol_id' =>'required|integer',
             // 'password' => ['required', Password::min(8)->mixedCase()->letters()->numbers()->symbols()->uncompromised(),],
         ];
@@ -23,7 +24,7 @@ class UserRegistrerRequest_v1 extends FormRequest
     public function attributes()
     {
         return [
-            'nombres'=> '[nombre y apellidos del usuario]',
+            'persona_id' => '[persona]',
             'rol_id' => '[rol del usuario]'
         ];
     }

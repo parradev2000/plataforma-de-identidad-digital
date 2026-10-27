@@ -17,11 +17,9 @@ class ApiServiceController extends Controller
    {
       $users = DB::table('mod_persona.persona')->where('ci', $request->ci)->get();
 
-      $resp = "Proceso Terminado";
-
       return response()->json([
          'data' => $users
          
       ], 200);
-         }
+   }
 }

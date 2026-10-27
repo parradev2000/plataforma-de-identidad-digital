@@ -15,7 +15,8 @@ class RolStoreRequest_v1 extends FormRequest
     public function rules()
     {
         return [
-            'rol' => 'required|regex:/[a-z ]+/i|unique:pgsql.autenticacion.rols,rol',
+            'rol' => 'required_without:name|regex:/[a-z ]+/i|unique:pgsql.autenticacion.rols,name',
+            'name' => 'required_without:rol|regex:/[a-z ]+/i|unique:pgsql.autenticacion.rols,name',
             'estado' => 'nullable|boolean',
         ];
     }

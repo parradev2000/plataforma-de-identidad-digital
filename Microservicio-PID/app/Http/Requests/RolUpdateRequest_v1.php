@@ -16,7 +16,8 @@ class RolUpdateRequest_v1 extends FormRequest
     {
         return [
             'estado' => 'nullable|boolean',
-            'rol' => 'nullable|regex:/[a-z ]+/i|unique:pgsql.autenticacion.rols,rol,'.$this->route('rol'),
+            'rol' => 'nullable|regex:/[a-z ]+/i|unique:pgsql.autenticacion.rols,name,'.$this->route('rol'),
+            'name' => 'nullable|regex:/[a-z ]+/i|unique:pgsql.autenticacion.rols,name,'.$this->route('rol'),
         ];
     }
 

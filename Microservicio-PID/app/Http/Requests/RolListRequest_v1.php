@@ -16,6 +16,7 @@ class RolListRequest_v1 extends FormRequest
         return [
             'paginate' => 'nullable|integer',
             'rol' => 'nullable|string',
+            'name' => 'nullable|string',
             'estado' => 'nullable|in:active,inactive',
         ];
     }

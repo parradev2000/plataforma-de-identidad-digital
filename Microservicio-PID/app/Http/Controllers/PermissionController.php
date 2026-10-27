@@ -144,7 +144,7 @@ class PermissionController extends Controller
         $permissions = Permission::whereIn('id', $request->permission_ids)->get();
         $rol->givePermissionTo($permissions);
 
-        AuditoriaController::auditoria_pro($request, 'Se asignaron permisos al rol ' . $rol->rol);
+        AuditoriaController::auditoria_pro($request, 'Se asignaron permisos al rol ' . ($rol->rol ?? $rol->name));
 
         return response([
             'data' => PermissionResource::collection($permissions),
@@ -163,7 +163,7 @@ class PermissionController extends Controller
         $permissions = Permission::whereIn('id', $request->permission_ids)->get();
         $rol->revokePermissionTo($permissions);
 
-        AuditoriaController::auditoria_pro($request, 'Se revocaron permisos del rol ' . $rol->rol);
+        AuditoriaController::auditoria_pro($request, 'Se revocaron permisos del rol ' . ($rol->rol ?? $rol->name));
 
         return response([
             'data' => PermissionResource::collection($permissions),

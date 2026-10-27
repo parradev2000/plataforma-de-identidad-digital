@@ -33,7 +33,9 @@ class RolController extends Controller
             $query = rol::query()->orderByDesc('id');
 
             if ($request->has('rol')) {
-                $query->whereRaw('LOWER(rol) LIKE ?', ['%' . strtolower($request->rol) . '%']);
+                $query->whereRaw('LOWER(name) LIKE ?', ['%' . strtolower($request->rol) . '%']);
+            } elseif ($request->has('name')) {
+                $query->whereRaw('LOWER(name) LIKE ?', ['%' . strtolower($request->name) . '%']);
             }
 
             if ($request->has('estado')) {
@@ -75,13 +77,16 @@ class RolController extends Controller
         */
         public function create(RolStoreRequest_v1 $request)
         {
+            $rolName = $request->rol ?? $request->name;
+            $estado = $request->has('estado') && $request->estado !== null ? $request->estado : true;
             $rol = rol::create([
-                "rol" => $request->rol,
-                "estado" => ($request->has("estado"))? $request->estado: true
+                "name" => strtolower($rolName),
+                "guard_name" => $request->guard_name ?? 'web',
+                "estado" => $estado
             ]);
 
             //////////////////AUDITORIA/////////////////////////////////////////
-            AuditoriaController::auditoria_pro($request, 'Se creó el rol '.$rol->rol);
+            AuditoriaController::auditoria_pro($request, 'Se creó el rol '.$rol->name);
 
             ///////////////// Evento ///////////////////////////////////
             try {
@@ -107,13 +112,24 @@ class RolController extends Controller
         {
             $roles = collect();
             foreach ($request->items as $value) {
-                if (rol::where('rol', $value['rol'])->exists()) {
+                $rolName = $value['rol'] ?? $value['name'] ?? null;
+                if (!$rolName) {
                     return response(
                         [
                             'message' => 'Este nombre del rol ya existe.'
                         ], 422);
                 }
-                $roles = $roles->push(rol::create($value));
+                if (rol::whereRaw('LOWER(name) = ?', [strtolower($rolName)])->exists()) {
+                    return response(
+                        [
+                            'message' => 'Este nombre del rol ya existe.'
+                        ], 422);
+                }
+                $roles = $roles->push(rol::create([
+                    'name' => strtolower($rolName),
+                    'guard_name' => $value['guard_name'] ?? 'web',
+                    'estado' => $value['estado'] ?? true,
+                ]));
             }
 
             //////////////////AUDITORIA/////////////////////////////////////////
@@ -143,13 +159,19 @@ class RolController extends Controller
         public function update(RolUpdateRequest_v1 $request, $rol)
         {
             $rol = rol::find($rol);
-            $rol->update([
-                "rol" => ($request->has("rol"))? $request->rol: $rol->rol,
-                "estado" => ($request->has("estado"))? $request->estado: true
-            ]);
+            $data = [];
+            if ($request->has("rol")) {
+                $data["name"] = strtolower($request->rol);
+            } elseif ($request->has("name")) {
+                $data["name"] = strtolower($request->name);
+            }
+            if ($request->has("estado")) {
+                $data["estado"] = $request->estado;
+            }
+            $rol->update($data);
 
             //////////////////AUDITORIA/////////////////////////////////////////
-            AuditoriaController::auditoria_pro($request, 'Se actualizó el rol '.$rol->rol);
+            AuditoriaController::auditoria_pro($request, 'Se actualizó el rol '.$rol->name);
 
             ///////////////// Evento ///////////////////////////////////
             try {
@@ -211,14 +233,14 @@ class RolController extends Controller
                 return response(
                     [
                         'data' => [],
-                        'message' => 'El rol '.$rol->rol.' tiene usuarios relacionados.'
+                        'message' => 'El rol '.($rol->rol ?? $rol->name).' tiene usuarios relacionados.'
                     ], 400);
             }
 
             $rol->delete();
 
             //////////////////AUDITORIA/////////////////////////////////////////
-            AuditoriaController::auditoria_pro($request, 'Se eliminó el rol '.$rol->rol);
+            AuditoriaController::auditoria_pro($request, 'Se eliminó el rol '.($rol->rol ?? $rol->name));
 
             ///////////////// Evento ///////////////////////////////////
             try {
@@ -251,7 +273,7 @@ class RolController extends Controller
                             return response(
                                 [
                                     'data' => [],
-                                    'message' => 'El rol '.$rol->rol.' tiene usuarios relacionados.'
+                                    'message' => 'El rol '.($rol->rol ?? $rol->name).' tiene usuarios relacionados.'
                                 ], 400);
                         }
                         $rol->delete();

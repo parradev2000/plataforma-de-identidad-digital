@@ -50,7 +50,7 @@ class AuthController extends Controller
     public function login(LoginRequest_v1 $request){
 
         //Extraer usuario de la BD
-        $usuario = User::where('usuario', $request->usuario)->first();
+        $usuario = User::with('persona')->where('usuario', $request->usuario)->first();
 
         //Comprueba si el usuario está registrado en la BD
         if (!$usuario) {
@@ -63,7 +63,7 @@ class AuthController extends Controller
             $usuario->estado = false;
             $usuario->save();
 
-            AuditoriaController::auditoria('Usuario '.$usuario->nombres.' bloqueado', $usuario->usuario, $usuario->nombres, $request->ip());
+            AuditoriaController::auditoria('Usuario '.($usuario->persona ? trim(($usuario->persona->nombres ?? "") . " " . ($usuario->persona->apellidos ?? "")) : $usuario->usuario).' bloqueado', $usuario->usuario, ($usuario->persona ? trim(($usuario->persona->nombres ?? "") . " " . ($usuario->persona->apellidos ?? "")) : $usuario->usuario), $request->ip());
             return BestHelper::Data(null, 406, false, 'Usuario bloqueado(El usuario a excedido el numero de intentos para acceder a la página por favor contactar con su administrador).');
         }
 
@@ -74,7 +74,7 @@ class AuthController extends Controller
                 $usuario->save();
             }
 
-            AuditoriaController::auditoria('Inicio de sesión fallido(Usuario inactivo).', $usuario->usuario, $usuario->nombres, $request->ip());
+            AuditoriaController::auditoria('Inicio de sesión fallido(Usuario inactivo).', $usuario->usuario, ($usuario->persona ? trim(($usuario->persona->nombres ?? "") . " " . ($usuario->persona->apellidos ?? "")) : $usuario->usuario), $request->ip());
             return BestHelper::Data(null, 400, false, 'Usuario inactivo.');
         }
 
@@ -90,7 +90,7 @@ class AuthController extends Controller
                 $usuario->save();
             }
 
-            AuditoriaController::auditoria('Inicio de sesión fallido(Contraseña inválida).', $usuario->usuario, $usuario->nombres, $request->ip());
+            AuditoriaController::auditoria('Inicio de sesión fallido(Contraseña inválida).', $usuario->usuario, ($usuario->persona ? trim(($usuario->persona->nombres ?? "") . " " . ($usuario->persona->apellidos ?? "")) : $usuario->usuario), $request->ip());
             return BestHelper::Data(null, 401, false, 'Usuario y/o contraseña inválidos.');
         }
 
@@ -101,7 +101,7 @@ class AuthController extends Controller
                 $usuario->save();
             }
 
-            AuditoriaController::auditoria('Inicio de sesión fallido(Contraseña expirada).', $usuario->usuario, $usuario->nombres, $request->ip());
+            AuditoriaController::auditoria('Inicio de sesión fallido(Contraseña expirada).', $usuario->usuario, ($usuario->persona ? trim(($usuario->persona->nombres ?? "") . " " . ($usuario->persona->apellidos ?? "")) : $usuario->usuario), $request->ip());
             return BestHelper::Data(null, 405, false, 'Contraseña expirada.');
         }
 
@@ -131,7 +131,14 @@ class AuthController extends Controller
         $token->save();
 
         //////////////////AUDITORIA/////////////////////////////////////////
-        AuditoriaController::auditoria('Se inició la sesión del usuario '.$usuario->nombres, $usuario->usuario, $usuario->nombres, $request->ip());
+        if (!$usuario->relationLoaded('persona')) {
+            $usuario->load('persona');
+        }
+        if (!$token->relationLoaded('user')) {
+            $token->load('user.persona');
+        }
+        $nombresAudit = ($usuario->persona) ? trim(($usuario->persona->nombres ?? "") . " " . ($usuario->persona->apellidos ?? "")) : $usuario->usuario;
+        AuditoriaController::auditoria('Se inició la sesión del usuario '.$nombresAudit, $usuario->usuario, $nombresAudit, $request->ip());
 
         $usuario->int = 0;
         $usuario->save();
@@ -217,7 +224,11 @@ class AuthController extends Controller
     public function logout(Request $request){
         //////////////////AUDITORIA/////////////////////////////////////////
         $user = Helpers::user_log_all($request->header('Authorization'));
-        AuditoriaController::auditoria('Se cerró la sesión del usuario '.$user->nombres, $user->usuario, $user->nombres, $request->ip());
+        if ($user && !$user->relationLoaded('persona')) {
+            $user->load('persona');
+        }
+        $nombresAudit = ($user && $user->persona) ? trim(($user->persona->nombres ?? "") . " " . ($user->persona->apellidos ?? "")) : ($user->usuario ?? "");
+        AuditoriaController::auditoria('Se cerró la sesión del usuario '.$nombresAudit, $user->usuario ?? '---', $nombresAudit, $request->ip());
 
         $tokenFormateado = str_replace('Bearer ', '',$request->header('Authorization'));
         Token::where('token', $tokenFormateado)->delete();
@@ -231,7 +242,11 @@ class AuthController extends Controller
     public function auth_me(Request $request){
         //////////////////AUDITORIA/////////////////////////////////////////
         $user = Helpers::user_log_all($request->header('Authorization'));
-        AuditoriaController::auditoria('Consultar usuario', $user->usuario, $user->nombres, $request->ip());
+        if ($user && !$user->relationLoaded('persona')) {
+            $user->load('persona');
+        }
+        $nombresAudit = ($user && $user->persona) ? trim(($user->persona->nombres ?? "") . " " . ($user->persona->apellidos ?? "")) : ($user->usuario ?? "");
+        AuditoriaController::auditoria('Consultar usuario', $user->usuario ?? '---', $nombresAudit, $request->ip());
 
         return BestHelper::Data($user, 200, true, 'Consulta generada satisfactoriamente.');
     }

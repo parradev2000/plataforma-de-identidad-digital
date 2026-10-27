@@ -20,7 +20,7 @@ class LoginResource extends JsonResource
             'nombres' => $user->nombres,
             'id_usuario' => $user->id,
             'usuario' => $user->usuario,
-            'rol' => $user->rol->rol,
+            'rol' => $user->rol ? ($user->rol->rol ?? $user->rol->name) : null,
             'estado' => $user->estado,
         ];
     }

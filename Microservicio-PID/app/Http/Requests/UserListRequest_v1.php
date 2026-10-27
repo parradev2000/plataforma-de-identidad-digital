@@ -15,7 +15,8 @@ class UserListRequest_v1 extends FormRequest
     {
         return [
             'paginate' => 'nullable|integer',
-            'nombres' => 'nullable|string',
+            'persona_rel' => 'nullable',
+            'rol_rel' => 'nullable',
             'usuario' => 'nullable|string',
             'rol_id' => 'nullable|integer',
             'estado' => 'nullable|in:active,inactive',
@@ -26,9 +27,9 @@ class UserListRequest_v1 extends FormRequest
     {
         return [
             'paginate' => '[opcion paginate]',
-            'nombres' => '[opcion nombres]',
+            'persona_rel' => '[true/false para incluir persona]',
+            'rol_rel' => '[true/false para incluir rol]',
             'usuario' => '[opcion usuario]',
-            'carne' => '[opcion carne]',
             'rol_id' => '[opcion rol_id]',
             'estado' => '[opcion estado]'
         ];

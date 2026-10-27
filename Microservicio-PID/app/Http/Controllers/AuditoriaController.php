@@ -23,7 +23,13 @@ class AuditoriaController extends Controller
         if ($request->header('Authorization')) {
             $user = Helpers::user_log_all($request->header('Authorization'));
             if ($user) {
-                AuditoriaController::auditoria($accion, $user->usuario, $user->nombres, $request->ip());
+                $nombres = '';
+                if (isset($user->nombres) && $user->nombres) {
+                    $nombres = $user->nombres;
+                } elseif (method_exists($user, 'persona') && $user->persona) {
+                    $nombres = trim(($user->persona->nombres ?? '') . ' ' . ($user->persona->apellidos ?? ''));
+                }
+                AuditoriaController::auditoria($accion, $user->usuario, $nombres, $request->ip());
             }
         } elseif ($request->header('X-Authorization')) {
             $xAuth = $request->header('X-Authorization');

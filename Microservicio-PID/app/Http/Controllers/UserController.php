@@ -30,14 +30,24 @@ class UserController extends Controller
     */
     public function list(UserListRequest_v1 $request)
     {
-        $query = User::query()
-            ->orderByDesc('estado')
-            ->orderBy('nombres')
-            ->orderByDesc('id');
+        $personaRel = $request->input('persona_rel');
+        $showPersona = is_string($personaRel) ? in_array(strtolower($personaRel), ['true','1','on','yes']) : filter_var($personaRel, FILTER_VALIDATE_BOOLEAN);
+        $rolRel = $request->input('rol_rel');
+        $showRol = is_string($rolRel) ? in_array(strtolower($rolRel), ['true','1','on','yes']) : filter_var($rolRel, FILTER_VALIDATE_BOOLEAN);
 
-        if ($request->has('nombres')) {
-            $query->whereRaw('LOWER(nombres) LIKE ?', ['%' . strtolower($request->nombres) . '%']);
+        $with = [];
+        if ($showPersona === true) {
+            $with[] = 'persona';
         }
+        if ($showRol === true) {
+            $with[] = 'rol';
+        }
+
+        $query = User::query();
+        if (!empty($with)) {
+            $query->with($with);
+        }
+        $query->orderByDesc('estado')->orderBy('usuario')->orderByDesc('id');
 
         if ($request->has('usuario')) {
             $query->whereRaw('LOWER(usuario) LIKE ?', ['%' . strtolower($request->usuario) . '%']);
@@ -90,8 +100,10 @@ class UserController extends Controller
     public function register(UserRegistrerRequest_v1 $request)
     {
         $user = new User();
-        $user->nombres = $request->nombres;
         $user->usuario = $request->usuario;
+        if ($request->has('persona_id')) {
+            $user->persona_id = $request->persona_id;
+        }
         $user->rol_id = $request->rol_id;
         $user->password_expiry = $user->password_expire();
         $user->password = Hash::make(hash('sha256', 'User*'.now()->year));
@@ -122,12 +134,15 @@ class UserController extends Controller
     public function update(UserUpdateRequest_v1 $request, $user)
     {
         $user = User::find($user);
-            $user->update([
-                "nombres" => ($request->has("nombres"))? $request->nombres: $user->nombres,
+            $data = [
                 "usuario" => ($request->has("usuario"))? $request->usuario: $user->usuario,
                 "rol_id" => ($request->has("rol_id"))? $request->rol_id: $user->rol_id,
                 "estado" => ($request->has("estado"))? $request->estado: $user->estado
-            ]);
+            ];
+            if ($request->has('persona_id')) {
+                $data['persona_id'] = $request->persona_id;
+            }
+            $user->update($data);
 
         //////////////////AUDITORIA/////////////////////////////////////////
         AuditoriaController::auditoria_pro($request, 'Se actualizó el usuario '.$user->nombres);
