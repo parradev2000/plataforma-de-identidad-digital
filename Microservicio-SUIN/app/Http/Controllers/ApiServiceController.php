@@ -2,10 +2,6 @@
 
 namespace App\Http\Controllers;
 
-use App\Events\RolEvents;
-use App\Helpers\Helpers;
-
-use Illuminate\Http\Request;
 use App\Http\Requests\ApiRequest;
 
 use G4T\Swagger\Attributes\SwaggerSection;
@@ -19,11 +15,13 @@ class ApiServiceController extends Controller
 
    public function getDatos(ApiRequest $request)
    {
-         $users = DB::table('mod_persona.persona')->where('ci', $request->ci)->get();
+      $users = DB::table('mod_persona.persona')->where('ci', $request->ci)->get();
 
+      $resp = "Proceso Terminado";
 
-        $resp = "Proceso Terminado";
-        return response()->json($users, 200);
-   }
-
+      return response()->json([
+         'data' => $users
+         
+      ], 200);
+         }
 }

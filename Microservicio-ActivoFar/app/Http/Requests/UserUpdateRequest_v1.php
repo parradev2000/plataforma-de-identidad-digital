@@ -1,0 +1,49 @@
+<?php
+
+namespace App\Http\Requests;
+
+use Illuminate\Foundation\Http\FormRequest;
+
+class UserUpdateRequest_v1 extends FormRequest
+{
+    public function authorize()
+    {
+        return true;
+    }
+
+    public function rules()
+    {
+        return [
+            'estado' => 'boolean',
+            'nombres' => 'string',
+            'rol_id' => 'integer',
+            'usuario' => 'string|lowercase|unique:pgsql.autenticacion.users,usuario,'.$this->user,
+            'carne' => 'regex:/\d{11}/i|string|size:11|unique:pgsql.autenticacion.users,carne,'.$this->user,
+        ];
+    }
+
+    public function attributes()
+    {
+        return [
+            'nombres' => '[nombre y apellidos del usuario]',
+            'usuario' => '[nombre del usuario]',
+            'rol_id' => '[rol del usuario]',
+            'estado' => '[estado del usuario]',
+            'carne' => '[carne del usuario]'
+        ];
+    }
+
+    public function messages()
+    {
+        return [
+            'required' => 'El campo :attribute es obligatorio llenarlo.',
+            'unique' => 'El campo :attribute ya existe en la Base de Datos.',
+            'boolean' => 'El campo :attribute debe de ser de tipo booleano.',
+            'integer' => 'El campo :attribute debe ser un número entero.',
+            'string' => 'El campo :attribute debe ser de tipo string.',
+            'lowercase' => 'El :attribute debe ser minusculas.',
+            'size' => 'El :attribute debe contener 11 caracteres.',
+            'regex' => 'El :attribute debe contener solo numeros.',
+        ];
+    }
+}

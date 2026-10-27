@@ -19,15 +19,24 @@ class ApiServiceController extends Controller
 
    public function getDatos(ApiRequest $request)
    {
-         $users = DB::table('oficiales')
-         ->select('expediente','grado', 'unidad', 'ano_ingreso_far', 'descripcion','f_desde','f_hasta')
-         ->join('cargos', 'oficiales.id', '=', 'cargos.idpersona')
-         ->where('ci', $request->ci)
-         ->get();
+      $users = DB::table('oficiales')
+      ->select(
+         'expediente',
+         'grado',
+         DB::raw('unidad as um'),
+         'ano_ingreso_far',
+         'descripcion',
+         'f_desde',
+         'f_hasta',
+         'estado'
+      )
+      ->join('cargos', 'oficiales.id', '=', 'cargos.idpersona')
+      ->where('ci', $request->ci)
+      ->get();
 
-
-        $resp = "Proceso Terminado";
-        return response()->json($users, 200);
+      return response()->json([
+         'data' => $users
+      ], 200);
    }
 
 }

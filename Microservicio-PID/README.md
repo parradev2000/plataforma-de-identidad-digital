@@ -1,216 +1,66 @@
-# Microservicio-PID
+<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
 
-Microservicio del **Sistema de Administración de Solicitudes** de la Plataforma
-de Identidad Digital (PID). Desarrollado con FastAPI y Python 3.11, con
-documentación offline (Swagger UI y ReDoc) y conexión síncrona a PostgreSQL
-mediante SQLAlchemy.
+<p align="center">
+<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
+<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
+<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
+<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
+</p>
 
-Implementa el módulo **RF-SOL** de la especificación (ciclo de vida de la
-solicitud de servicios y su aprovisionamiento), el catálogo de servicios
-(RF-ADM-03, mínimo), auditoría (RF-AUD-01/02) y la verificación de identidad
-**solo como requisito previo** (RN-01): el módulo RF-VER completo (orquestación
-de proveedores, liveness, pertenencia, acceso) queda fuera de alcance en esta
-iteración.
+## About Laravel
 
-## Requisitos
+Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
 
-- Python 3.11+
-- PostgreSQL accesible en `10.10.16.250:5432` (base `bd_solicitudes`)
-- Docker (opcional)
+- [Simple, fast routing engine](https://laravel.com/docs/routing).
+- [Powerful dependency injection container](https://laravel.com/docs/container).
+- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
+- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
+- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
+- [Robust background job processing](https://laravel.com/docs/queues).
+- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
 
-## Configuración
+Laravel is accessible, powerful, and provides tools required for large, robust applications.
 
-Las variables se leen desde `.env` (ver `.env.example`):
+## Learning Laravel
 
-| Variable                     | Valor por defecto                                             |
-| ---------------------------- | ------------------------------------------------------------- |
-| `APP_NAME`                   | `Microservicio-PID`                                           |
-| `APP_VERSION`                | `0.1.0`                                                       |
-| `DEBUG`                      | `false`                                                       |
-| `DATABASE_URL`               | `postgresql+psycopg2://postgres:postgres@10.10.16.250:5432/bd_solicitudes` |
-| `VERIFICACION_VIGENCIA_DIAS` | `90` (vigencia de la credencial de identidad verificada, RN-10) |
-| `CORREO_DOMINIO`             | `empresa.cu` (dominio del adaptador simulado de correo)        |
+Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
 
-## Instalación local
+You may also try the [Laravel Bootcamp](https://bootcamp.laravel.com), where you will be guided through building a modern Laravel application from scratch.
 
-```powershell
-python -m venv .venv
-.\.venv\Scripts\Activate.ps1
-pip install -r requirements.txt
-alembic upgrade head
-uvicorn app.main:app --reload
-```
+If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains over 2000 video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
 
-Servicio disponible en `http://127.0.0.1:8000`.
+## Laravel Sponsors
 
-## Modelo de datos
+We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the Laravel [Patreon page](https://patreon.com/taylorotwell).
 
-| Entidad                  | Tabla                     | Notas                                                          |
-| ------------------------ | ------------------------- | -------------------------------------------------------------- |
-| `Persona`                | `personas`                | `ci` de 11 dígitos único, `activo` booleano    |
-| `Telefono`               | `telefonos`               | Nomenclador; N:N con personas (`persona_telefonos`) |
+### Premium Partners
 
-> Las tablas `usuarios`, `verificaciones`, `servicios`,
-> `solicitudes_servicio`, `solicitud_items`, `cuentas_aprovisionadas` y
-> `auditoria` fueron eliminadas por la migración `0006_solo_personas_telefonos`;
-> la base solo conserva `personas`, `telefonos` y `persona_telefonos`.
+- **[Vehikl](https://vehikl.com/)**
+- **[Tighten Co.](https://tighten.co)**
+- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
+- **[64 Robots](https://64robots.com)**
+- **[Cubet Techno Labs](https://cubettech.com)**
+- **[Cyber-Duck](https://cyber-duck.co.uk)**
+- **[Many](https://www.many.co.uk)**
+- **[Webdock, Fast VPS Hosting](https://www.webdock.io/en)**
+- **[DevSquad](https://devsquad.com)**
+- **[Curotec](https://www.curotec.com/services/technologies/laravel/)**
+- **[OP.GG](https://op.gg)**
+- **[WebReinvent](https://webreinvent.com/?utm_source=laravel&utm_medium=github&utm_campaign=patreon-sponsors)**
+- **[Lendio](https://lendio.com)**
 
-### Estados (sección 7 de la especificación)
+## Contributing
 
-- **Solicitud:** `ENVIADA → EN_REVISION → APROBADA | RECHAZADA | CANCELADA →
-  EN_PROVISION → COMPLETADA | COMPLETADA_PARCIAL | FALLIDA`
-- **Ítem:** `PENDIENTE → EN_PROCESO → CREADO | FALLIDO | REINTENTANDO`
-- **Verificación:** `APROBADA` (stub) y `EXPIRADA` al vencer la vigencia.
+Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
 
-## Endpoints
+## Code of Conduct
 
-| Método | Ruta                                    | Descripción                                    |
-| ------ | --------------------------------------- | ---------------------------------------------- |
-| `GET`  | `/health`                               | Estado del servicio y de PostgreSQL             |
-| `GET`  | `/local/docs`, `/local/redoc`            | Documentación offline                          |
-| `POST` | `/api/v1/personas`                      | Registra una persona                           |
-| `GET`  | `/api/v1/personas`                      | Lista con `skip`, `limit`, `ci`, `nombre`, `activo` |
-| `PATCH`| `/api/v1/personas/{id}`                 | Actualiza `activo`, `nombre` o `fecha_nacimiento` |
-| `GET`  | `/api/v1/phones`                        | Nomenclador de teléfonos (filtro `numero`)     |
-| `POST` | `/api/v1/phones`                        | Registra un teléfono (único)                   |
-| `GET`  | `/api/v1/personas/{id}/phones`          | Teléfonos de una persona                       |
-| `PUT`  | `/api/v1/personas/{id}/phones`          | Reemplaza los teléfonos (crea los que falten)  |
-| `POST` | `/api/v1/personas/{id}/phones/{tel_id}` | Asigna un teléfono existente                   |
-| `DELETE`| `/api/v1/personas/{id}/phones/{tel_id}` | Quita el teléfono a la persona                 |
-| `GET`  | `/api/v1/personas/{id}`                 | Obtiene una persona                            |
-| `DELETE`| `/api/v1/personas/{id}`                | Elimina una persona                            |
-| `POST` | `/api/v1/verifications`                 | Inicia verificación (stub APROBADA, ver nota)  |
-| `GET`  | `/api/v1/verifications`                 | Lista con `persona_id`, `skip`, `limit`        |
-| `GET`  | `/api/v1/verifications/{id}`            | Consulta estado (RF-VER-09)                    |
-| `GET`  | `/api/v1/services`                      | Catálogo con filtro `activo`                   |
-| `GET`  | `/api/v1/services/{id}`                 | Obtiene un servicio                            |
-| `POST` | `/api/v1/services`                      | Crea un servicio (RF-ADM-03)                   |
-| `PUT`  | `/api/v1/services/{id}`                 | Reemplaza un servicio                          |
-| `PATCH`| `/api/v1/services/{id}`                 | Actualiza parcialmente                         |
-| `DELETE`| `/api/v1/services/{id}`                | Elimina (409 si está en uso)                   |
-| `POST` | `/api/v1/service-requests`              | Crea solicitud (RF-SOL-03)                     |
-| `GET`  | `/api/v1/service-requests`              | Bandeja con `estado`, `prioridad`, `persona_id`, `soporte_id`, `desde`, `hasta` |
-| `GET`  | `/api/v1/service-requests/{id}`         | Consulta con items y cuentas (RF-SOL-09)       |
-| `PATCH`| `/api/v1/service-requests/{id}/assign`  | Soporte toma la solicitud (RF-SOL-04)          |
-| `PATCH`| `/api/v1/service-requests/{id}/decision`| Aprueba/rechaza (RF-SOL-05)                    |
-| `POST` | `/api/v1/service-requests/{id}/provision`| Ejecuta el aprovisionamiento (RF-SOL-06/07)    |
-| `PATCH`| `/api/v1/service-requests/{id}/cancel`  | Cancela (RF-SOL-08)                            |
-| `GET`  | `/api/v1/audit`                         | Auditoría con `entidad`, `entidad_id`, `accion`, `actor`, `desde`, `hasta` |
+In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
 
-Códigos de respuesta: `201` al crear, `204` al eliminar, `403` por rol o
-separación de funciones, `404` si no existe, `409` ante duplicados o violación
-de reglas de negocio, `422` ante datos inválidos o datos obligatorios faltantes.
+## Security Vulnerabilities
 
-### Reglas de negocio implementadas
+If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
 
-| Regla  | Comportamiento                                                                 |
-| ------ | ------------------------------------------------------------------------------ |
-| RN-01  | `POST /service-requests` devuelve `409` sin verificación APROBADA y vigente.   |
-| RN-06  | Rechazar sin `motivo` devuelve `422` (validación en schema y en servicio).     |
-| RN-07  | `assign`, `decision` y `provision` exigen rol SOPORTE o COORDINADOR (`403`).   |
-| RN-08  | La credencial temporal solo se devuelve una vez en la respuesta de `provision`; en BD se guarda su hash SHA-256 y se marca `cambio_clave_obligatorio`. |
-| RN-10  | `VERIFICACION_VIGENCIA_DIAS` (90 por defecto); al vencer, RN-01 deja de cumplirse y la verificación pasa a `EXPIRADA`. |
-| RN-11  | Un usuario cuya `persona_id` coincide con la del solicitante recibe `403` al decidir. |
-| RN-12  | Toda mutación relevante genera evento de auditoría con actor, IP y `X-Correlation-Id`. |
+## License
 
-### Ejemplo de flujo
-
-```powershell
-# 1. Persona + verificación (stub)
-curl.exe -X POST http://127.0.0.1:8000/api/v1/personas -H "Content-Type: application/json" `
-  -d '{"ci":"99000111222","nombre":"Pedro Prueba","telefonos":["51234567"]}'
-curl.exe -X POST http://127.0.0.1:8000/api/v1/verifications -H "Content-Type: application/json" `
-  -d '{"persona_id":1}'
-
-# 2. Solicitud con los tres servicios del MVP
-curl.exe -X POST http://127.0.0.1:8000/api/v1/service-requests -H "Content-Type: application/json" `
-  -H "X-Correlation-Id: demo-1" `
-  -d '{"persona_id":1,"prioridad":"ALTA","servicios":[
-        {"servicio_id":1,"datos":{"grupo":"ventas"}},
-        {"servicio_id":2,"datos":{"cuota_mb":2048}},
-        {"servicio_id":3,"datos":{"perfil":"editor"}}]}'
-
-# 3. Soporte toma, decide y aprueba
-curl.exe -X PATCH http://127.0.0.1:8000/api/v1/service-requests/1/assign -H "Content-Type: application/json" -d '{"soporte_id":1}'
-curl.exe -X PATCH http://127.0.0.1:8000/api/v1/service-requests/1/decision -H "Content-Type: application/json" `
-  -d '{"decision":"APROBAR","soporte_id":1}'
-
-# 4. Aprovisionar (devuelve la credencial temporal de red privada una sola vez)
-curl.exe -X POST http://127.0.0.1:8000/api/v1/service-requests/1/provision -H "Content-Type: application/json" `
-  -d '{"soporte_id":1}'
-
-# 5. Auditoría
-curl.exe "http://127.0.0.1:8000/api/v1/audit?entidad=solicitud&entidad_id=1"
-```
-
-## Datos semilla (migración `0002`)
-
-Catálogo: `RED_PRIVADA` (AD/LDAP, requiere `grupo`), `CORREO_CORPORATIVO`
-(Microsoft 365, requiere `cuota_mb`), `RED_PUBLICA` (Portal web, requiere
-`perfil`).
-
-Usuarios demo: `id 1` SOPORTE, `id 2` ADMIN, `id 3` AUDITOR, `id 4`
-SOLICITANTE, `id 5` COORDINADOR (este último sin autenticación real: el rol se
-recibe en el cuerpo de la petición, ver *Pendientes*).
-
-## Aprovisionamiento simulado
-
-Los adaptadores de `app/services/aprovisionamiento.py` generan los datos que
-entregaría cada sistema destino sin contactar sistemas externos:
-
-- **Red privada:** `usuario`, `grupo`, credencial temporal (la única que se
-  devuelve).
-- **Correo corporativo:** `direccion`, `cuota_mb`, `alias`.
-- **Red pública:** `usuario`, `permisos`.
-
-Para simular un fallo (RF-SOL-07 / HU-11) basta con añadir
-`"simular_fallo": true` en los datos del ítem; el ítem queda `FALLIDO` con
-motivo `FALLO_SIMULADO_ADAPTADOR` y puede reintentarse con el mismo endpoint
-`POST .../provision` sin duplicar cuentas ya creadas.
-
-Para conectar un proveedor real basta con sustituir el cuerpo de cada
-adaptador manteniendo la firma.
-
-## Migraciones (Alembic)
-
-```powershell
-alembic current
-alembic revision --autogenerate -m "descripcion"
-alembic upgrade head
-```
-
-`0001_initial` crea el esquema completo; `0002_datos_iniciales` siembra el
-catálogo de servicios y los usuarios demo.
-
-## Tests
-
-```powershell
-pytest
-```
-
-25 tests cubren: salud/documentación, personas, catálogo, verificación y el
-flujo completo de solicitudes (RN-01, RN-06, RN-07, RN-11, aprovisionamiento
-parcial y reintento, cancelaciones, filtros de bandeja y auditoría). Cada test
-ejecuta dentro de una transacción que se revierte al finalizar.
-
-## Docker
-
-```powershell
-docker compose up --build
-```
-
-La API queda expuesta en `http://localhost:8001` (8000 dentro del contenedor).
-PostgreSQL no se contenedoriza: se usa el servidor externo de `DATABASE_URL`.
-
-## Pendientes conocidos (fuera de alcance en v1)
-
-- **Autenticación y MFA:** el rol del actor se envía en el cuerpo
-  (`soporte_id`, `actor_id`) y se valida contra `usuarios`; sustituir por JWT +
-  MFA antes de exponer el servicio.
-- **Módulo RF-VER:** `POST /api/v1/verifications` crea directamente una
-  verificación `APROBADA` (stub) en lugar de orquestar documento, liveness,
-  pertenencia y derecho de acceso.
-- **Notificaciones (RF-NOT)** y exportación de reportes (RF-AUD-03).
-- **Auditoría de lecturas:** hoy solo se auditan mutaciones (RN-12 exige
-  auditar también accesos a datos sensibles).
-- **Idempotencia y circuit breaker** hacia proveedores externos reales.
+The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
