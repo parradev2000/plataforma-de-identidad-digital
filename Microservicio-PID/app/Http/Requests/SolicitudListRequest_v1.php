@@ -16,7 +16,7 @@ class SolicitudListRequest_v1 extends FormRequest
         return [
             'paginate' => 'nullable|integer',
             'persona_rel' => 'nullable',
-            'personas_rel' => 'nullable',
+            'servicio_rel' => 'nullable',
             'persona_id' => 'nullable|integer',
             'persona_ci' => 'nullable|string',
             'persona_nombres' => 'nullable|string',
@@ -31,7 +31,7 @@ class SolicitudListRequest_v1 extends FormRequest
         return [
             'paginate' => '[opcion paginate]',
             'persona_rel' => '[true/false para incluir datos de la persona]',
-            'personas_rel' => '[alias de persona_rel]',
+            'servicio_rel' => '[true/false para incluir datos completos del servicio]',
             'persona_id' => '[opcion persona_id]',
             'persona_ci' => '[opcion persona_ci]',
             'persona_nombres' => '[opcion persona_nombres]',

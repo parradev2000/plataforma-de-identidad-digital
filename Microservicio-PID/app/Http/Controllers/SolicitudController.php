@@ -22,11 +22,13 @@ class SolicitudController extends Controller
     */
     public function list(SolicitudListRequest_v1 $request)
     {
-        $with = ['estado', 'servicio'];
-        $personasRel = $request->input('persona_rel') ?? $request->input('personas_rel');
-        $showPersona = is_string($personasRel) ? in_array(strtolower($personasRel), ['true','1','on','yes']) : filter_var($personasRel, FILTER_VALIDATE_BOOLEAN);
+        $with = ['estado'];
+        $showPersona = $request->boolean('persona_rel');
         if ($showPersona || $request->has('persona_ci') || $request->has('ci') || $request->has('persona_nombres') || $request->has('persona_apellidos')) {
             $with[] = 'persona';
+        }
+        if ($request->boolean('servicio_rel')) {
+            $with[] = 'servicio';
         }
         $query = Solicitud::with($with)->orderByDesc('id');
 
