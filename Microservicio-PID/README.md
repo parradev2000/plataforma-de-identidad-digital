@@ -1,66 +1,112 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# Microservicio-PID (Plataforma de Identidad Digital)
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+Microservicio principal del ecosistema de Identidad Digital, desarrollado con [Laravel 10](https://laravel.com) y PHP 8.1+. Gestiona autenticación, autorización, usuarios, roles, permisos, personas, solicitudes, servicios, estados y auditoría.
 
-## About Laravel
+## Características
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+- **Autenticación**: Login con `usuario`/contraseña, logout, validación de token, integración con servidor WSO (OAuth).
+- **Autorización**: Control de acceso basado en roles y permisos mediante [Spatie Laravel Permission](https://spatie.be/docs/laravel-permission).
+- **Usuarios**: CRUD, cambio y reseteo de contraseña, operaciones masivas (registro/actualización/eliminación), vinculación con persona y rol.
+- **Personas**: Gestión de personas en `nomencladores.personas` con `nombres`, `apellidos`, `ci`, `id_digital` (único), `usuario`, `contrasena`.
+- **Solicitudes**: Gestión de solicitudes vinculadas a personas, con estados y servicios.
+- **Catálogos**: Servicios y estados.
+- **Auditoría**: Registro de acciones con usuario, IP y fecha/hora.
+- **Tiempo real**: Broadcasting con eventos para actualizar listados de usuarios.
+- **Múltiples esquemas PostgreSQL**: `autenticacion`, `nomencladores`, `datos`.
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+## Requisitos
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+- PHP >= 8.1
+- Composer
+- PostgreSQL
+- Extensiones: `pdo_pgsql`, `mbstring`, `openssl`, `tokenizer`, `xml`, `ctype`, `json`
 
-## Learning Laravel
+## Instalación
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+```bash
+# Clonar e instalar dependencias
+composer install
 
-You may also try the [Laravel Bootcamp](https://bootcamp.laravel.com), where you will be guided through building a modern Laravel application from scratch.
+# Configurar entorno
+cp .env.example .env
+php artisan key:generate
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains over 2000 video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+# Configurar base de datos en .env
+# Ejecutar migraciones
+php artisan migrate
 
-## Laravel Sponsors
+# (Opcional) Ejecutar seeders
+php artisan db:seed
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the Laravel [Patreon page](https://patreon.com/taylorotwell).
+# Iniciar servidor
+php artisan serve
+```
 
-### Premium Partners
+## Configuración (.env)
 
-- **[Vehikl](https://vehikl.com/)**
-- **[Tighten Co.](https://tighten.co)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Cubet Techno Labs](https://cubettech.com)**
-- **[Cyber-Duck](https://cyber-duck.co.uk)**
-- **[Many](https://www.many.co.uk)**
-- **[Webdock, Fast VPS Hosting](https://www.webdock.io/en)**
-- **[DevSquad](https://devsquad.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel/)**
-- **[OP.GG](https://op.gg)**
-- **[WebReinvent](https://webreinvent.com/?utm_source=laravel&utm_medium=github&utm_campaign=patreon-sponsors)**
-- **[Lendio](https://lendio.com)**
+Variables principales:
 
-## Contributing
+| Variable | Descripción |
+|----------|-------------|
+| `DB_CONNECTION` | Conexión PostgreSQL (`pgsql`) |
+| `DB_HOST`, `DB_PORT`, `DB_DATABASE`, `DB_USERNAME`, `DB_PASSWORD` | Credenciales de BD |
+| `MIDDLEWARE` | Middleware de autenticación a utilizar |
+| `PUSHER_HOST`, `PUSHER_PORT`, `PUSHER_APP_KEY` | Configuración para broadcasting/WebSocket |
+| `URL_IDENTIDAD_DIGITAL` | URL base del servicio |
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+## Estructura de esquemas
 
-## Code of Conduct
+| Esquema | Tablas principales |
+|---------|-------------------|
+| `autenticacion` | `users`, `roles`, `permissions`, `model_has_roles`, `model_has_permissions`, `role_has_permissions`, `personal_access_tokens`, `tokens`, `blacklist` |
+| `nomencladores` | `personas`, `roles` (catálogo) |
+| `datos` | `solicitudes`, `servicios`, `estados`, `auditoria` |
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+## Rutas principales (API v1)
 
-## Security Vulnerabilities
+| Grupo | Prefijo | Descripción |
+|-------|---------|-------------|
+| Auth | `/v1/login`, `/v1/auth/me`, `/v1/logout` | Autenticación |
+| Usuarios | `/v1/users` | CRUD, cambio/reset contraseña, masivos |
+| Roles | `/v1/roles` | CRUD y operaciones masivas |
+| Permisos | `/v1/permissions` | CRUD, asignación/revocación |
+| Personas | `/v1/persons` | CRUD de personas |
+| Solicitudes | `/v1/solicitudes` | CRUD de solicitudes |
+| Servicios | `/v1/services` | CRUD de servicios |
+| Estados | `/v1/states` | CRUD de estados |
+| Auditoría | `/v1/auditoria` | Consulta de auditoría |
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+## Pruebas
 
-## License
+```bash
+# Ejecutar todas las pruebas
+php artisan test
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+# Ejecutar con filtro
+php artisan test --filter=EndpointsTest
+```
+
+## Comandos útiles
+
+```bash
+# Limpiar caché
+php artisan cache:clear
+php artisan config:clear
+php artisan route:clear
+php artisan view:clear
+
+# Ver rutas
+php artisan route:list
+```
+
+## Dependencias clave
+
+- `laravel/framework` ^10.0
+- `spatie/laravel-permission` ^6.0
+- `g4t/swagger` (documentación)
+- `pusher/pusher-php-server` (broadcasting)
+- `guzzlehttp/guzzle`
+
+## Licencia
+
+Este proyecto es software privado. Todos los derechos reservados.
