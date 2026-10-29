@@ -14,7 +14,6 @@ class UserRegistrerRequest_v1 extends FormRequest
     public function rules()
     {
         return [
-            'nombres' => 'required|string',
             'persona_id' => 'required|integer|exists:pgsql.nomencladores.personas,id|unique:pgsql.autenticacion.users,persona_id',
             'rol_id' =>'required|integer',
             // 'password' => ['required', Password::min(8)->mixedCase()->letters()->numbers()->symbols()->uncompromised(),],

@@ -14,6 +14,9 @@ class PersonaResource extends JsonResource
             'nombres' => $this->nombres,
             'apellidos' => $this->apellidos,
             'ci' => $this->ci,
+            'id_digital' => $this->id_digital,
+            'usuario' => $this->usuario,
+            'contrasena' => $this->contrasena,
         ];
 
         $solicitudesRel = $request->input('solicitudes_rel');

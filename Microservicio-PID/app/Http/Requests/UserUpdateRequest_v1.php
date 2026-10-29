@@ -15,7 +15,6 @@ class UserUpdateRequest_v1 extends FormRequest
     {
         return [
             'estado' => 'boolean',
-            'nombres' => 'string',
             'rol_id' => 'integer',
             'usuario' => 'string|lowercase|unique:pgsql.autenticacion.users,usuario,'.$this->user,
             'persona_id' => 'integer|exists:pgsql.nomencladores.personas,id|unique:pgsql.autenticacion.users,persona_id,'.$this->user,
@@ -25,7 +24,6 @@ class UserUpdateRequest_v1 extends FormRequest
     public function attributes()
     {
         return [
-            'nombres' => '[nombre y apellidos del usuario]',
             'usuario' => '[nombre del usuario]',
             'rol_id' => '[rol del usuario]',
             'estado' => '[estado del usuario]',

@@ -88,6 +88,9 @@ class PersonaController extends Controller
             'nombres' => $request->nombres,
             'apellidos' => $request->apellidos,
             'ci' => $request->ci,
+            'id_digital' => $request->id_digital,
+            'usuario' => $request->usuario,
+            'contrasena' => $request->contrasena,
         ]);
 
         return response([
@@ -112,6 +115,15 @@ class PersonaController extends Controller
         }
         if ($request->has('ci')) {
             $data['ci'] = $request->ci;
+        }
+        if ($request->has('id_digital')) {
+            $data['id_digital'] = $request->id_digital;
+        }
+        if ($request->has('usuario')) {
+            $data['usuario'] = $request->usuario;
+        }
+        if ($request->has('contrasena')) {
+            $data['contrasena'] = $request->contrasena;
         }
 
         $persona->update($data);

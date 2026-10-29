@@ -21,6 +21,9 @@ class PersonaUpdateRequest_v1 extends FormRequest
             'nombres' => 'sometimes|required|string',
             'apellidos' => 'sometimes|required|string',
             'ci' => 'sometimes|required|string|size:11|regex:/^[0-9]{11}$/|unique:pgsql.nomencladores.personas,ci,' . $id,
+            'id_digital' => 'sometimes|nullable|string|unique:pgsql.nomencladores.personas,id_digital,' . $id,
+            'usuario' => 'sometimes|nullable|string',
+            'contrasena' => 'sometimes|nullable|string',
         ];
     }
 
@@ -30,6 +33,9 @@ class PersonaUpdateRequest_v1 extends FormRequest
             'nombres' => '[nombres]',
             'apellidos' => '[apellidos]',
             'ci' => '[carnet de identidad]',
+            'id_digital' => '[id digital]',
+            'usuario' => '[usuario]',
+            'contrasena' => '[contrasena]',
         ];
     }
 

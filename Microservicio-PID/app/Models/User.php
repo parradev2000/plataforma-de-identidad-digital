@@ -44,6 +44,22 @@ class User extends Authenticatable
         return $this->belongsTo(Persona::class, 'persona_id');
     }
 
+    /**
+     * Orden de listado por defecto: activos primero, luego por el nombre de la persona.
+     *
+     * La columna usuarios.nombres fue eliminada del esquema, por lo que el orden
+     * se resuelve contra la persona relacionada.
+     */
+    public function scopeOrdered($query)
+    {
+        return $query
+            ->orderByDesc('estado')
+            ->orderByRaw(
+                '(SELECT p.nombres FROM nomencladores.personas p WHERE p.id = '.$query->getModel()->getTable().'.persona_id) ASC'
+            )
+            ->orderByDesc('id');
+    }
+
     protected function usuario(): Attribute
     {
         return new Attribute(

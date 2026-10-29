@@ -116,7 +116,7 @@ class UserController extends Controller
         try {
             // Conexión con el Servidor de Websocket
             Http::get(env('PUSHER_HOST').':'.env('PUSHER_PORT').'/app/'.env('PUSHER_APP_KEY'));
-            event(new UserEvents(UserResource::collection(User::orderByDesc('estado')->orderBy('nombres')->orderByDesc('id')->get())));
+            event(new UserEvents(UserResource::collection(User::ordered()->get())));
         } catch (\Throwable $th) {
         }
 
@@ -151,7 +151,7 @@ class UserController extends Controller
         try {
             // Conexión con el Servidor de Websocket
             Http::get(env('PUSHER_HOST').':'.env('PUSHER_PORT').'/app/'.env('PUSHER_APP_KEY'));
-            event(new UserEvents(UserResource::collection(User::orderByDesc('estado')->orderBy('nombres')->orderByDesc('id')->get())));
+            event(new UserEvents(UserResource::collection(User::ordered()->get())));
         } catch (\Throwable $th) {
         }
 
@@ -188,7 +188,7 @@ class UserController extends Controller
         try {
             // Conexión con el Servidor de Websocket
             Http::get(env('PUSHER_HOST').':'.env('PUSHER_PORT').'/app/'.env('PUSHER_APP_KEY'));
-            event(new UserEvents(UserResource::collection(User::orderByDesc('estado')->orderBy('nombres')->orderByDesc('id')->get())));
+            event(new UserEvents(UserResource::collection(User::ordered()->get())));
         } catch (\Throwable $th) {
         }
 
@@ -268,7 +268,7 @@ class UserController extends Controller
         try {
             // Conexión con el Servidor de Websocket
             Http::get(env('PUSHER_HOST').':'.env('PUSHER_PORT').'/app/'.env('PUSHER_APP_KEY'));
-            event(new UserEvents(UserResource::collection(User::orderByDesc('estado')->orderBy('nombres')->orderByDesc('id')->get())));
+            event(new UserEvents(UserResource::collection(User::ordered()->get())));
         } catch (\Throwable $th) {
         }
 
@@ -311,7 +311,7 @@ class UserController extends Controller
         try {
             // Conexión con el Servidor de Websocket
             Http::get(env('PUSHER_HOST').':'.env('PUSHER_PORT').'/app/'.env('PUSHER_APP_KEY'));
-            event(new UserEvents(UserResource::collection(User::orderByDesc('estado')->orderBy('nombres')->orderByDesc('id')->get())));
+            event(new UserEvents(UserResource::collection(User::ordered()->get())));
         } catch (\Throwable $th) {
         }
         

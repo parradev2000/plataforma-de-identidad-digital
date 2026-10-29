@@ -44,9 +44,9 @@ Route::prefix('v1')->middleware([$middleware, 'permission:users.create'])->contr
 
 // Actualizar usuarios
 Route::prefix('v1')->middleware([$middleware, 'permission:users.edit'])->controller(UserController::class)->group(function(){
-    Route::put('users/{user}', 'update'); 
-    Route::put('users/reset_password/{user}', 'reset_password');
     Route::put('users/update_masivo', 'update_masivo');
+    Route::put('users/reset_password/{user}', 'reset_password');
+    Route::put('users/{user}', 'update');
 });
 
 // Eliminar usuarios
@@ -71,8 +71,8 @@ Route::prefix('v1')->middleware([$middleware, 'permission:roles.create'])->contr
 
 // actualizar rol
 Route::prefix('v1')->middleware([$middleware, 'permission:roles.edit'])->controller(RolController::class)->group(function(){
-    Route::put('roles/{rol}', 'update');
     Route::put('roles/update_masivo', 'update_masivo');
+    Route::put('roles/{rol}', 'update');
 });
 
 // Eliminar rol

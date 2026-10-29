@@ -16,6 +16,9 @@ class Persona extends Model
         'nombres',
         'apellidos',
         'ci',
+        'id_digital',
+        'usuario',
+        'contrasena',
     ];
 
     protected $hidden = ['created_at', 'updated_at'];
